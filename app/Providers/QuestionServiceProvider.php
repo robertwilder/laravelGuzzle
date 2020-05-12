@@ -16,7 +16,7 @@ class QuestionServiceProvider extends ServiceProvider
     {
         $this->app->singleton(QuestionClient::class, function () {
             return new QuestionClient([
-                'base_uri' => 'http://trivia.propernerd.com/api/questions',
+                'base_uri' => 'https://opentdb.com',
             ]);
         });
     }

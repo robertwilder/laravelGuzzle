@@ -17,4 +17,23 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/quiz', function () {
+    return view('quiz');
+});
+
+Route::get('/thequiz', function () {
+    return view('singleq');
+});
+
+
+
+Route::get('/test', function () {
+    return view('test');
+});
+
+
 Route::get('questions', 'QuestionsController')->name('questions');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

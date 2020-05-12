@@ -26,16 +26,20 @@ class QuestionServices
         // return collection 
         
 
-        $response = $this->client->get('?limit=10&random=true');
+        $response = $this->client->get('/api.php?amount=10');
+
 
         $body = json_decode((string) $response->getBody(), true);
 
-        $collection = collect($body)->map(function ($question){
+        
+        $collection = collect($body['results'])->map(function ($question){
             return [
                 'category' => $question['category'],
+                'type' => $question['type'],
+                'difficulty' => $question['difficulty'],
                 'question' => $question['question'],
-                'answer' => $question['answer'],
-                'tags' => $question['tags']
+                'correct_answer' => $question['correct_answer'],
+                'incorrect_answers' => $question['incorrect_answers']
             ];
 
         });
