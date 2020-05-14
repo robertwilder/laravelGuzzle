@@ -1989,7 +1989,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 var baseURL = "/questions";
+var intervalTimer;
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -1999,8 +2024,18 @@ var baseURL = "/questions";
       answersShuffled: [],
       userResponses: [],
       questionIndex: 0,
+      userScore: '',
+      userName: '',
+      finalScore: 0,
       i: null,
-      j: null
+      j: null,
+      selectedTime: 0,
+      timeLeft: '00:00',
+      endTime: '0',
+      times: [{
+        sec: 600,
+        display: ' 10m'
+      }]
     };
   },
   methods: {
@@ -2026,7 +2061,7 @@ var baseURL = "/questions";
           }
         }
 
-        for (_this.i = 0; _this.i < _this.answers.length; _this.i++) {
+        for (_this.i = 0; _this.i < _this.questions.length; _this.i++) {
           // let hello = shuffle(this.answers[this.i])
           _this.answersShuffled.push(lodash_shuffle__WEBPACK_IMPORTED_MODULE_0___default()(_this.answers[_this.i]));
         }
@@ -2039,6 +2074,82 @@ var baseURL = "/questions";
     },
     prev: function prev() {
       this.questionIndex--;
+    },
+    addScore: function addScore() {
+      this.userScore = this.score + '/' + this.questions.length;
+      this.finalScore = this.finalScore + this.score;
+      console.log(this.userScore);
+      axios.post('/api/score', {
+        scoreInt: this.finalScore,
+        userScore: this.userScore,
+        userName: this.userName
+      }).then(function (response) {
+        console.log(response);
+      })["catch"](function (error) {
+        console.log(error);
+      }); //  const params = new URLSearchParams();
+      //     params.append('event_id', 20);
+      //     params.append('item_id', 30);
+      //     params.append('description', 'my item');
+      // axios({
+      //     method: 'post',
+      //     url: '/api/score',
+      //     data: params
+      //     });
+      // axios.post('/api/score', {postId: 1, userId: 1}, { 
+      //         headers: {
+      //         'content-type': 'application/json'
+      //         }
+      // }
+      // )
+      // .then(response => {
+      //         console.log(response)
+      //     }).catch(function (error) {
+      // console.log(error);
+      // });
+    },
+    setTime: function setTime(seconds) {
+      clearInterval(intervalTimer);
+      this.timer(seconds);
+    },
+    timer: function timer(seconds) {
+      var now = Date.now();
+      var end = now + seconds * 1000;
+      this.displayTimeLeft(seconds);
+      this.selectedTime = seconds; // this.initialTime = seconds;
+
+      this.displayEndTime(end);
+      this.countdown(end);
+    },
+    countdown: function countdown(end) {
+      var _this2 = this;
+
+      // this.initialTime = this.selectedTime;
+      intervalTimer = setInterval(function () {
+        var secondsLeft = Math.round((end - Date.now()) / 1000);
+
+        if (secondsLeft === 0) {
+          _this2.endTime = 0;
+        }
+
+        if (secondsLeft < 0) {
+          clearInterval(intervalTimer);
+          return;
+        }
+
+        _this2.displayTimeLeft(secondsLeft);
+      }, 1000);
+    },
+    displayTimeLeft: function displayTimeLeft(secondsLeft) {
+      var minutes = Math.floor(secondsLeft % 3600 / 60);
+      var seconds = secondsLeft % 60;
+      this.timeLeft = "".concat(zeroPadded(minutes), ":").concat(zeroPadded(seconds));
+    },
+    displayEndTime: function displayEndTime(timestamp) {
+      var end = new Date(timestamp);
+      var hour = end.getHours();
+      var minutes = end.getMinutes();
+      this.endTime = "".concat(hourConvert(hour), ":").concat(zeroPadded(minutes));
     }
   },
   created: function created() {
@@ -2060,6 +2171,16 @@ var baseURL = "/questions";
     }
   }
 });
+
+function zeroPadded(num) {
+  // 4 --> 04
+  return num < 10 ? "0".concat(num) : num;
+}
+
+function hourConvert(hour) {
+  // 15 --> 3
+  return hour % 12 || 12;
+}
 
 /***/ }),
 
@@ -2153,7 +2274,30 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 var baseURL = "/questions";
+var intervalTimer;
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2163,8 +2307,16 @@ var baseURL = "/questions";
       answersShuffled: [],
       userResponses: [],
       questionIndex: 0,
+      userScore: '',
       i: null,
-      j: null
+      j: null,
+      selectedTime: 0,
+      timeLeft: '00:00',
+      endTime: '0',
+      times: [{
+        sec: 600,
+        display: ' 10m'
+      }]
     };
   },
   methods: {
@@ -2190,7 +2342,7 @@ var baseURL = "/questions";
           }
         }
 
-        for (_this.i = 0; _this.i < _this.answers.length; _this.i++) {
+        for (_this.i = 0; _this.i < _this.questions.length; _this.i++) {
           // let hello = shuffle(this.answers[this.i])
           _this.answersShuffled.push(lodash_shuffle__WEBPACK_IMPORTED_MODULE_0___default()(_this.answers[_this.i]));
         }
@@ -2203,6 +2355,79 @@ var baseURL = "/questions";
     },
     prev: function prev() {
       this.questionIndex--;
+    },
+    addScore: function addScore() {
+      this.userScore = this.score + '/' + this.questions.length;
+      console.log(this.userScore);
+      axios.post('/api/score', {
+        userScore: this.userScore
+      }).then(function (response) {
+        console.log(response);
+      })["catch"](function (error) {
+        console.log(error);
+      }); //  const params = new URLSearchParams();
+      //     params.append('event_id', 20);
+      //     params.append('item_id', 30);
+      //     params.append('description', 'my item');
+      // axios({
+      //     method: 'post',
+      //     url: '/api/score',
+      //     data: params
+      //     });
+      // axios.post('/api/score', {postId: 1, userId: 1}, { 
+      //         headers: {
+      //         'content-type': 'application/json'
+      //         }
+      // }
+      // )
+      // .then(response => {
+      //         console.log(response)
+      //     }).catch(function (error) {
+      // console.log(error);
+      // });
+    },
+    setTime: function setTime(seconds) {
+      clearInterval(intervalTimer);
+      this.timer(seconds);
+    },
+    timer: function timer(seconds) {
+      var now = Date.now();
+      var end = now + seconds * 1000;
+      this.displayTimeLeft(seconds);
+      this.selectedTime = seconds; // this.initialTime = seconds;
+
+      this.displayEndTime(end);
+      this.countdown(end);
+    },
+    countdown: function countdown(end) {
+      var _this2 = this;
+
+      // this.initialTime = this.selectedTime;
+      intervalTimer = setInterval(function () {
+        var secondsLeft = Math.round((end - Date.now()) / 1000);
+
+        if (secondsLeft === 0) {
+          _this2.endTime = 0;
+        }
+
+        if (secondsLeft < 0) {
+          clearInterval(intervalTimer);
+          return;
+        }
+
+        _this2.displayTimeLeft(secondsLeft);
+      }, 1000);
+    },
+    displayTimeLeft: function displayTimeLeft(secondsLeft) {
+      var minutes = Math.floor(secondsLeft % 3600 / 60);
+      var seconds = secondsLeft % 60;
+      this.timeLeft = "".concat(zeroPadded(minutes), ":").concat(zeroPadded(seconds));
+    },
+    displayEndTime: function displayEndTime(timestamp) {
+      var end = new Date(timestamp);
+      var hour = end.getHours();
+      var minutes = end.getMinutes();
+      this.endTime = "".concat(hourConvert(hour), ":").concat(zeroPadded(minutes));
     }
   },
   created: function created() {
@@ -2224,6 +2449,16 @@ var baseURL = "/questions";
     }
   }
 });
+
+function zeroPadded(num) {
+  // 4 --> 04
+  return num < 10 ? "0".concat(num) : num;
+}
+
+function hourConvert(hour) {
+  // 15 --> 3
+  return hour % 12 || 12;
+}
 
 /***/ }),
 
@@ -39345,11 +39580,10 @@ var render = function() {
                           "."
                       ),
                       _c("br"),
-                      _vm._v(
-                        " " +
-                          _vm._s(question.question) +
-                          "\n                    "
-                      ),
+                      _c("span", {
+                        domProps: { innerHTML: _vm._s(question.question) }
+                      }),
+                      _vm._v(" "),
                       _c("p", [
                         _vm._v("Catagory: " + _vm._s(question.category))
                       ]),
@@ -39380,16 +39614,36 @@ var render = function() {
                       ]
                     },
                     [
-                      _c("li", [_vm._v("A. " + _vm._s(option[0]))]),
+                      _c("li", [
+                        _vm._v("A. "),
+                        _c("span", {
+                          domProps: { innerHTML: _vm._s(option[0]) }
+                        })
+                      ]),
                       _vm._v(" "),
-                      _c("li", [_vm._v("B. " + _vm._s(option[1]))]),
+                      _c("li", [
+                        _vm._v("B. "),
+                        _c("span", {
+                          domProps: { innerHTML: _vm._s(option[1]) }
+                        })
+                      ]),
                       _vm._v(" "),
                       option.length < 3
                         ? _c("div")
                         : _c("div", [
-                            _c("li", [_vm._v("C. " + _vm._s(option[2]))]),
+                            _c("li", [
+                              _vm._v("C. "),
+                              _c("span", {
+                                domProps: { innerHTML: _vm._s(option[2]) }
+                              })
+                            ]),
                             _vm._v(" "),
-                            _c("li", [_vm._v("D. " + _vm._s(option[3]))])
+                            _c("li", [
+                              _vm._v("D. "),
+                              _c("span", {
+                                domProps: { innerHTML: _vm._s(option[3]) }
+                              })
+                            ])
                           ]),
                       _vm._v(" "),
                       _c("br"),
@@ -39431,13 +39685,29 @@ var render = function() {
                             _vm._v("Please select one")
                           ]),
                           _vm._v(" "),
-                          _c("option", [_vm._v(_vm._s(option[0]))]),
+                          _c("option", [
+                            _c("span", {
+                              domProps: { innerHTML: _vm._s(option[0]) }
+                            })
+                          ]),
                           _vm._v(" "),
-                          _c("option", [_vm._v(_vm._s(option[1]))]),
+                          _c("option", [
+                            _c("span", {
+                              domProps: { innerHTML: _vm._s(option[1]) }
+                            })
+                          ]),
                           _vm._v(" "),
-                          _c("option", [_vm._v(_vm._s(option[2]))]),
+                          _c("option", [
+                            _c("span", {
+                              domProps: { innerHTML: _vm._s(option[2]) }
+                            })
+                          ]),
                           _vm._v(" "),
-                          _c("option", [_vm._v(_vm._s(option[3]))])
+                          _c("option", [
+                            _c("span", {
+                              domProps: { innerHTML: _vm._s(option[3]) }
+                            })
+                          ])
                         ]
                       ),
                       _vm._v(" "),
@@ -39504,8 +39774,8 @@ var render = function() {
                     {
                       name: "show",
                       rawName: "v-show",
-                      value: _vm.questionIndex === _vm.answers.length,
-                      expression: "questionIndex === answers.length"
+                      value: _vm.questionIndex === _vm.questions.length,
+                      expression: "questionIndex === questions.length"
                     }
                   ]
                 },
@@ -39525,9 +39795,94 @@ var render = function() {
                       ])
                     ]),
                     _vm._v(" "),
+                    _c(
+                      "form",
+                      {
+                        attrs: { action: "/api/score", method: "POST" },
+                        on: {
+                          submit: function($event) {
+                            $event.preventDefault()
+                            return _vm.addScore()
+                          }
+                        }
+                      },
+                      [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.userName,
+                                expression: "userName"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "text",
+                              name: "username",
+                              placeholder:
+                                "Enter what you would like to be called"
+                            },
+                            domProps: { value: _vm.userName },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.userName = $event.target.value
+                              }
+                            }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _vm._m(0)
+                      ]
+                    ),
+                    _vm._v(" "),
                     _c("p")
                   ])
                 ]
+              ),
+              _vm._v(
+                "\n                " +
+                  _vm._s(_vm.timeLeft) +
+                  "\n                "
+              ),
+              _c(
+                "ul",
+                { staticClass: "columns is-mobile is-centered" },
+                _vm._l(_vm.times, function(time, index) {
+                  return _c("li", { key: index, staticClass: "column time" }, [
+                    _c(
+                      "a",
+                      {
+                        class: [
+                          "button",
+                          "is-link",
+                          {
+                            "is-active":
+                              time.sec === _vm.selectedTime && _vm.endTime !== 0
+                          }
+                        ],
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.setTime(time.sec)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                    " +
+                            _vm._s(_vm.times.display) +
+                            "\n                    "
+                        )
+                      ]
+                    )
+                  ])
+                }),
+                0
               )
             ],
             2
@@ -39537,7 +39892,20 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-4 text-center" }, [
+      _c(
+        "button",
+        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        [_vm._v("Submit Score")]
+      )
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -39590,11 +39958,10 @@ var render = function() {
                           "."
                       ),
                       _c("br"),
-                      _vm._v(
-                        " " +
-                          _vm._s(question.question) +
-                          "\n                    "
-                      ),
+                      _c("span", {
+                        domProps: { innerHTML: _vm._s(question.question) }
+                      }),
+                      _vm._v(" "),
                       _c("p", [
                         _vm._v("Catagory: " + _vm._s(question.category))
                       ]),
@@ -39625,16 +39992,36 @@ var render = function() {
                       ]
                     },
                     [
-                      _c("li", [_vm._v("A. " + _vm._s(option[0]))]),
+                      _c("li", [
+                        _vm._v("A. "),
+                        _c("span", {
+                          domProps: { innerHTML: _vm._s(option[0]) }
+                        })
+                      ]),
                       _vm._v(" "),
-                      _c("li", [_vm._v("B. " + _vm._s(option[1]))]),
+                      _c("li", [
+                        _vm._v("B. "),
+                        _c("span", {
+                          domProps: { innerHTML: _vm._s(option[1]) }
+                        })
+                      ]),
                       _vm._v(" "),
                       option.length < 3
                         ? _c("div")
                         : _c("div", [
-                            _c("li", [_vm._v("C. " + _vm._s(option[2]))]),
+                            _c("li", [
+                              _vm._v("C. "),
+                              _c("span", {
+                                domProps: { innerHTML: _vm._s(option[2]) }
+                              })
+                            ]),
                             _vm._v(" "),
-                            _c("li", [_vm._v("D. " + _vm._s(option[3]))])
+                            _c("li", [
+                              _vm._v("D. "),
+                              _c("span", {
+                                domProps: { innerHTML: _vm._s(option[3]) }
+                              })
+                            ])
                           ]),
                       _vm._v(" "),
                       _c("br"),
@@ -39676,13 +40063,29 @@ var render = function() {
                             _vm._v("Please select one")
                           ]),
                           _vm._v(" "),
-                          _c("option", [_vm._v(_vm._s(option[0]))]),
+                          _c("option", [
+                            _c("span", {
+                              domProps: { innerHTML: _vm._s(option[0]) }
+                            })
+                          ]),
                           _vm._v(" "),
-                          _c("option", [_vm._v(_vm._s(option[1]))]),
+                          _c("option", [
+                            _c("span", {
+                              domProps: { innerHTML: _vm._s(option[1]) }
+                            })
+                          ]),
                           _vm._v(" "),
-                          _c("option", [_vm._v(_vm._s(option[2]))]),
+                          _c("option", [
+                            _c("span", {
+                              domProps: { innerHTML: _vm._s(option[2]) }
+                            })
+                          ]),
                           _vm._v(" "),
-                          _c("option", [_vm._v(_vm._s(option[3]))])
+                          _c("option", [
+                            _c("span", {
+                              domProps: { innerHTML: _vm._s(option[3]) }
+                            })
+                          ])
                         ]
                       ),
                       _vm._v(" "),
@@ -39749,8 +40152,8 @@ var render = function() {
                     {
                       name: "show",
                       rawName: "v-show",
-                      value: _vm.questionIndex === _vm.answers.length,
-                      expression: "questionIndex === answers.length"
+                      value: _vm.questionIndex === _vm.questions.length,
+                      expression: "questionIndex === questions.length"
                     }
                   ]
                 },
@@ -39770,9 +40173,62 @@ var render = function() {
                       ])
                     ]),
                     _vm._v(" "),
+                    _c(
+                      "form",
+                      {
+                        attrs: { action: "/api/score", method: "POST" },
+                        on: {
+                          submit: function($event) {
+                            return _vm.addScore()
+                          }
+                        }
+                      },
+                      [_vm._m(0)]
+                    ),
+                    _vm._v(" "),
                     _c("p")
                   ])
                 ]
+              ),
+              _vm._v(
+                "\n                " +
+                  _vm._s(_vm.timeLeft) +
+                  "\n                "
+              ),
+              _c(
+                "ul",
+                { staticClass: "columns is-mobile is-centered" },
+                _vm._l(_vm.times, function(time, index) {
+                  return _c("li", { key: index, staticClass: "column time" }, [
+                    _c(
+                      "a",
+                      {
+                        class: [
+                          "button",
+                          "is-link",
+                          {
+                            "is-active":
+                              time.sec === _vm.selectedTime && _vm.endTime !== 0
+                          }
+                        ],
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.setTime(time.sec)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                    " +
+                            _vm._s(_vm.times.display) +
+                            "\n                    "
+                        )
+                      ]
+                    )
+                  ])
+                }),
+                0
               )
             ],
             2
@@ -39782,7 +40238,20 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-4 text-center" }, [
+      _c(
+        "button",
+        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        [_vm._v("Submit Score")]
+      )
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -52347,15 +52816,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************************************************!*\
   !*** ./resources/js/components/SingleQComponent.vue ***!
   \******************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _SingleQComponent_vue_vue_type_template_id_3e4e4a5f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SingleQComponent.vue?vue&type=template&id=3e4e4a5f& */ "./resources/js/components/SingleQComponent.vue?vue&type=template&id=3e4e4a5f&");
 /* harmony import */ var _SingleQComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SingleQComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/SingleQComponent.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _SingleQComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _SingleQComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -52385,7 +52853,7 @@ component.options.__file = "resources/js/components/SingleQComponent.vue"
 /*!*******************************************************************************!*\
   !*** ./resources/js/components/SingleQComponent.vue?vue&type=script&lang=js& ***!
   \*******************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

@@ -19,18 +19,11 @@ Route::get('/', function () {
 
 Route::get('/quiz', function () {
     return view('quiz');
-});
+})->middleware('auth');
 
 Route::get('/thequiz', function () {
     return view('singleq');
 });
-
-
-
-Route::get('/test', function () {
-    return view('test');
-});
-
 
 Route::get('questions', 'QuestionsController')->name('questions');
 

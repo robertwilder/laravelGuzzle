@@ -14,9 +14,9 @@
                         </div>
                     @endif
 
-                    You are still logged in!
-
                     <quiz-component></quiz-component>
+
+                    <br/>
 
                 </div>
             </div>
