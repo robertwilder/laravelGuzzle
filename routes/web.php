@@ -26,7 +26,9 @@ Route::get('/thequiz', function () {
 });
 
 Route::get('questions', 'QuestionsController')->name('questions');
+Route::get('/highscore', 'ScoreController@index');
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+

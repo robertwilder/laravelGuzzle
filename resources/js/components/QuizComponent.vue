@@ -3,7 +3,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">Questions</div>
+                <div class="card-header">Questions Catagory: Random</div>
                 
                 <div class="card-body">
                 
@@ -68,6 +68,12 @@
                                 <div class="form-group">
                                         <input type="text" v-model="userName" name="username" placeholder="Enter what you would like to be called" class="form-control">
                                 </div>
+                                <p v-if="errors.length">
+                                            
+                                         <ul>
+                                            <li v-for="error in errors" :key="error.error">{{ error }}</li>
+                                         </ul>
+                                </p>
                                 <div class="col-md-4 text-center">
                                         <button class="btn btn-primary" type="submit">Submit Score</button>
                                 </div>
@@ -79,7 +85,7 @@
 						</p>
 					</li>
 				</div>
-                {{ timeLeft }}
+                <!-- {{ timeLeft }}
                 <ul class="columns is-mobile is-centered">
                     <li v-for="(time, index) in times" :key="index" class="column time">
                     <a v-on:click.prevent="setTime(time.sec)" :class="[
@@ -90,7 +96,7 @@
                     {{ times.display }}
                     </a>
                      </li>
-                 </ul>
+                 </ul> -->
 
                 </div>
             </div>
@@ -118,8 +124,9 @@
                 userResponses: [],
                 questionIndex: 0,
                 userScore: '',
-                userName: '',
+                userName: null,
                 finalScore: 0,
+                errors: [],
 
                 i: null,
                 j: null,
@@ -137,6 +144,7 @@
                 ]
             }
         },
+        
         methods: {
             getQuestions(){
                 axios.get(baseURL)
@@ -173,8 +181,28 @@
                 prev: function() {
 			    this.questionIndex--;
                 },
-                addScore() {
+
+
+
                     
+                checkForm: function (e) {
+                    if (this.name) {
+                        return this.userName;
+                    }
+
+                    this.errors = [];
+
+                    if (!this.name) {
+                         this.errors.push('Name required.');
+                        }
+                    
+
+                    e.preventDefault();
+                    },
+
+
+                addScore() {
+                   
                     this.userScore = this.score + '/' + this.questions.length
                     this.finalScore = this.finalScore + this.score
                     console.log(this.userScore)
@@ -184,31 +212,10 @@
                             console.log(response)
                         }).catch(function (error) {
                             console.log(error);
+
                         });
-                    //  const params = new URLSearchParams();
-                    //     params.append('event_id', 20);
-                    //     params.append('item_id', 30);
-                    //     params.append('description', 'my item');
-                    // axios({
-                    //     method: 'post',
-                    //     url: '/api/score',
-                    //     data: params
-                    //     });
-
-                    // axios.post('/api/score', {postId: 1, userId: 1}, { 
-                    //         headers: {
-                    //         'content-type': 'application/json'
-                    //         }
-                    // }
-                    // ) 
-                    // .then(response => {
-                    //         console.log(response)
-                    //     }).catch(function (error) {
-                    // console.log(error);
-                    // });
-
-
                 },
+
                  setTime(seconds) {
                  clearInterval(intervalTimer);
                  this.timer(seconds);

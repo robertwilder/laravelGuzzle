@@ -2013,6 +2013,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 var baseURL = "/questions";
 var intervalTimer;
 
@@ -2025,8 +2031,9 @@ var intervalTimer;
       userResponses: [],
       questionIndex: 0,
       userScore: '',
-      userName: '',
+      userName: null,
       finalScore: 0,
+      errors: [],
       i: null,
       j: null,
       selectedTime: 0,
@@ -2075,6 +2082,19 @@ var intervalTimer;
     prev: function prev() {
       this.questionIndex--;
     },
+    checkForm: function checkForm(e) {
+      if (this.name) {
+        return this.userName;
+      }
+
+      this.errors = [];
+
+      if (!this.name) {
+        this.errors.push('Name required.');
+      }
+
+      e.preventDefault();
+    },
     addScore: function addScore() {
       this.userScore = this.score + '/' + this.questions.length;
       this.finalScore = this.finalScore + this.score;
@@ -2087,26 +2107,7 @@ var intervalTimer;
         console.log(response);
       })["catch"](function (error) {
         console.log(error);
-      }); //  const params = new URLSearchParams();
-      //     params.append('event_id', 20);
-      //     params.append('item_id', 30);
-      //     params.append('description', 'my item');
-      // axios({
-      //     method: 'post',
-      //     url: '/api/score',
-      //     data: params
-      //     });
-      // axios.post('/api/score', {postId: 1, userId: 1}, { 
-      //         headers: {
-      //         'content-type': 'application/json'
-      //         }
-      // }
-      // )
-      // .then(response => {
-      //         console.log(response)
-      //     }).catch(function (error) {
-      // console.log(error);
-      // });
+      });
     },
     setTime: function setTime(seconds) {
       clearInterval(intervalTimer);
@@ -39553,7 +39554,9 @@ var render = function() {
     _c("div", { staticClass: "row justify-content-center" }, [
       _c("div", { staticClass: "col-md-12" }, [
         _c("div", { staticClass: "card" }, [
-          _c("div", { staticClass: "card-header" }, [_vm._v("Questions")]),
+          _c("div", { staticClass: "card-header" }, [
+            _vm._v("Questions Catagory: Random")
+          ]),
           _vm._v(" "),
           _c(
             "div",
@@ -39836,6 +39839,20 @@ var render = function() {
                           })
                         ]),
                         _vm._v(" "),
+                        _vm.errors.length
+                          ? _c("p", [
+                              _c(
+                                "ul",
+                                _vm._l(_vm.errors, function(error) {
+                                  return _c("li", { key: error.error }, [
+                                    _vm._v(_vm._s(error))
+                                  ])
+                                }),
+                                0
+                              )
+                            ])
+                          : _vm._e(),
+                        _vm._v(" "),
                         _vm._m(0)
                       ]
                     ),
@@ -39843,46 +39860,6 @@ var render = function() {
                     _c("p")
                   ])
                 ]
-              ),
-              _vm._v(
-                "\n                " +
-                  _vm._s(_vm.timeLeft) +
-                  "\n                "
-              ),
-              _c(
-                "ul",
-                { staticClass: "columns is-mobile is-centered" },
-                _vm._l(_vm.times, function(time, index) {
-                  return _c("li", { key: index, staticClass: "column time" }, [
-                    _c(
-                      "a",
-                      {
-                        class: [
-                          "button",
-                          "is-link",
-                          {
-                            "is-active":
-                              time.sec === _vm.selectedTime && _vm.endTime !== 0
-                          }
-                        ],
-                        on: {
-                          click: function($event) {
-                            $event.preventDefault()
-                            return _vm.setTime(time.sec)
-                          }
-                        }
-                      },
-                      [
-                        _vm._v(
-                          "\n                    " +
-                            _vm._s(_vm.times.display) +
-                            "\n                    "
-                        )
-                      ]
-                    )
-                  ])
-                }),
-                0
               )
             ],
             2
